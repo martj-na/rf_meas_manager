@@ -30,6 +30,7 @@ from std_msgs.msg import Float64MultiArray
 from rf_meas_manager_interfaces.msg import ChannelPower, ZeroSpan
 
 from rf_meas_manager.rf_meas_manager_class import RFMeasManager
+from rf_meas_manager.rf_meas_manager_utils import log_msg_to_csv
 
 from typing import Any
 
@@ -49,7 +50,7 @@ class RFMeasManagerNode(NodeBase):
         """
         super().__init__(node_name, verbose)
 
-        self.parser = RFMeasManager()
+        self.manager = RFMeasManager()
 
         self.get_logger().warn('RF Measurements Manager initialized')
 
@@ -105,7 +106,7 @@ class RFMeasManagerNode(NodeBase):
 
         :param msg: GPSNavPvt message.
         """
-        self.parser.update_gps(gps_msg)
+        self.manager.update_gps(gps_msg)
 
 
 
@@ -115,7 +116,7 @@ class RFMeasManagerNode(NodeBase):
         :param msg: Float64MultiArray message.
         """
         try:
-            msg = self.parser.build_chpow_message(raw_msg)
+            msg = self.manager.build_chpow_message(raw_msg)
             if msg is None:
                 return
 
@@ -123,6 +124,8 @@ class RFMeasManagerNode(NodeBase):
 
             if self._verbose:
                 self.get_logger().info("Published ChannelPower message")
+            
+            log_msg_to_csv(msg)
 
         except Exception as e:
             self.get_logger().error(f"Error in chpow_callback: {e}")
@@ -133,14 +136,17 @@ class RFMeasManagerNode(NodeBase):
         :param raw_msg: Float64MultiArray message (6 x N matrix).
         """
         try:
-            msg = self.parser.build_zerospan_message(raw_msg)
+            msg = self.manager.build_zerospan_message(raw_msg)
             if msg is None:
                 return
 
             self.publisher_zerospan.publish(msg)
 
+
             if self._verbose:
                 self.get_logger().info("Published ZeroSpan message")
+            
+            log_msg_to_csv(msg)
 
         except Exception as e:
             self.get_logger().error(f"Error in zerospan_callback: {e}")
