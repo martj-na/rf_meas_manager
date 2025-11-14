@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 import csv
+import json
 import os
 from rosidl_runtime_py.convert import message_to_ordereddict
 from ament_index_python.packages import get_package_share_directory
@@ -49,28 +50,23 @@ def gps_to_timestamp_string(gps_msg) -> str:
     return dt.isoformat().replace("+00:00", "Z")
 
 
-
 def flatten_dict(d, parent_key="", sep="."):
-    """
-    Flatten nested dicts and lists.
-    Example:
-        {"trace_1": [1,2], "gps": {"lat": 45}}
-    → {"trace_1.0": 1, "trace_1.1": 2, "gps.lat": 45}
-    """
-    items = {}
+    flat = {}
 
     for key, value in d.items():
         new_key = f"{parent_key}{sep}{key}" if parent_key else key
 
         if isinstance(value, dict):
-            items.update(flatten_dict(value, new_key, sep))
-        elif isinstance(value, list):
-            for idx, item in enumerate(value):
-                items[f"{new_key}.{idx}"] = item
-        else:
-            items[new_key] = value
+            flat.update(flatten_dict(value, new_key, sep))
 
-    return items
+        elif isinstance(value, list):
+            # una sola colonna con dentro la lista JSON
+            flat[new_key] = json.dumps(value)
+
+        else:
+            flat[new_key] = value
+
+    return flat
 
 
 def log_msg_to_csv(msg):
