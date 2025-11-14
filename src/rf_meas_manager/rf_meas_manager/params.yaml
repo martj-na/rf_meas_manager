@@ -1,0 +1,42 @@
+params:
+
+  autostart:
+    type: bool
+    default_value: false
+    description: "Autostart the AMQP bridge when the node is launched."
+    constraints: "Cannot be changed."
+    read_only: true
+    var_name: _autostart
+
+  verbose:
+    type: bool
+    default_value: true
+    description: "Enable verbose logging for debugging purposes."
+    constraints: "Cannot be changed."
+    read_only: true
+    var_name: _verbose
+  
+  input_topics.gnss:
+    type: string
+    default_value: '/gnss_drivers/gps/fix'
+    description: "Topic for GNSS data input."
+    constraints: "Must be a valid ROS2 topic name."
+    read_only: true
+    var_name: _topic_gnss
+  
+  input_topics.chpow_raw:
+    type: string
+    default_value: '/anritsu_driver/channel_power'
+    description: "Topic for raw Channel Power data input."
+    constraints: "Must be a valid ROS2 topic name."
+    read_only: true
+    var_name: _topic_chpow_raw
+
+
+  input_topics.zerospan_raw:
+    type: string
+    default_value: '/anritsu_driver/traces'
+    description: "Topic for raw Channel Power data input."
+    constraints: "Must be a valid ROS2 topic name."
+    read_only: true
+    var_name: _topic_zerospan_raw

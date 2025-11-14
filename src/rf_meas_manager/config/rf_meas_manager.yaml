@@ -1,0 +1,15 @@
+/rf_meas_manager:
+  ros__parameters:
+    dua:
+      params_file_path: '/home/neo/workspace/src/rf_meas_manager/rf_meas_manager/params.yaml'
+
+    autostart: true
+    verbose: true
+
+    input_topics:
+      gnss: '/gnss_driver/ubx/nav/pvt' 
+      chpow_raw: '/anritsu_driver/channel_power'
+      zerospan_raw: '/anritsu_driver/traces'
+
+
+    # mieiparametri:
